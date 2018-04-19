@@ -1,0 +1,20 @@
+[package]
+name = "rust_snippit_server"
+version = "0.1.0"
+authors = ["Tyler Scoville <tscoville@zendesk.com>"]
+
+[dependencies]
+rocket = "0.3.6"
+rocket_codegen = "0.3.6"
+error-chain="0.7"
+serde = "1.0.8"
+serde_derive = "1.0.8"
+serde_json = "1.0.2"
+pulldown-cmark = "0.0.8"
+redis = "0.8.0"
+uuid = { version = "0.6", features = ["v4"] }
+
+[dependencies.rocket_contrib]
+version = "*"
+default-features = false
+features = ["handlebars_templates"]

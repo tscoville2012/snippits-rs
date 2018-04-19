@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Snippits</title>
+
+        {{> common/header }}
+
+        <script src="/static/scripts/prism.js" defer></script>
+    </head>
+
+    <body>
+        <header class="c-header">
+            <h1 class="c-header__title"><a href="/">Useful Snippits</a></h1>
+            <a class="c-btn" href="/new_snippit" role="button">Create New Snippit</a>
+        </header>
+        <main class="c-main">
+                <div class="c-main__body">
+                    <table class="c-table">
+                        <tbody>
+                        {{#each snippits}}
+
+                            <tr class="c-table__row">
+                                <td class="c-table__row__cell votecell" colspan="1">
+                                    <form id="up_vote" method="POST" action="/upvote">
+                                        <a href="javascript:{}" onclick="document.getElementById('up_vote').submit();" class="vote-up-off" title="This answer is useful">up vote</a>
+                                        <input type="hidden" name="snippit_key" value={{snippit_key}}>
+                                        <span itemprop="upvoteCount" class="vote-count-post ">{{vote_count}}</span>
+                                    </form>
+                                </td>
+                                <td class="c-table__row__cell" colspan="10">
+                                    <h3 class="u-gamma u-mb-sm">{{title}}</h3>
+                                    <div>
+                                        <pre><code class="snippitcell language-{{snippit_language}}"> 
+{{code_snippit}}     
+                                        </pre></code>
+                                    </div>
+                                    <div style="display:none"> 
+                                            {{snippit_key}}
+                                    </div>
+                                </td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+            </div>
+        </main>
+
+    </body>
+
+    {{> common/footer }}
+</html>

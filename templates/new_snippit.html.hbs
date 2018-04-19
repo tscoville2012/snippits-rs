@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Snippits</title>
+
+    {{> common/header }}
+    
+    <script src="/static/scripts/prism.js"></script>
+  </head>
+  <body>
+    <header class="c-header">
+        <h1 class="c-header__title"><a href="/">Useful Snippits</a></h1>
+    </header>
+    <main class="c-main">
+        <div class="container">
+        <div class="c-main__body">
+          <form method="POST" action="/new_snippit">
+              <div>
+                  <label class="c-txt__label" for="title">Title: </label>
+                  <input class="c-txt__input" type="text" name="title" />
+              </div>
+              <div>
+                  <label class="c-txt__label" for="title">Language: </label>
+                  <select class="c-txt__input c-txt__input--select" name="snippit_language" id="snippit_language"></select>
+              </div>
+              <div>
+                  <label class="c-txt__label" for="body">Body: </label>
+                  <textarea class="c-txt__input c-txt__input--area is-resizable large-t-area" name="body"></textarea>
+              </div>
+              <input class="c-btn c-btn--primary" type="submit" value="Create Snippit"></input>
+          </form>
+        </div>
+        </div>
+    </main>
+    <script> 
+      var prismLangs = Object.keys(Prism.languages)
+      <!-- first three elements are bad -->
+      prismLangs.splice(0,3)
+      prismLangs.sort()
+      for( lang in prismLangs ) {
+          document.getElementById('snippit_language').add(new Option( prismLangs[lang] ))
+      }
+    </script>
+
+  </body>
+  
+      {{> common/footer }}
+</html>
