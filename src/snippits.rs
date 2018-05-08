@@ -22,7 +22,7 @@ pub struct SnippitForm {
     snippit_language: String,
 }
 
-#[derive(Serialize, FromForm, Debug)]
+#[derive(FromForm, Debug)]
 pub struct UpvoteForm {
     snippit_key: String,
 }
@@ -33,31 +33,34 @@ struct Snippit {
     code_snippit: Option<String>,
     snippit_language: Option<String>,
     snippit_key: String,
+    vote_count: u32,
+}
+
+#[derive(Serialize)]
+struct SnippitIndexContext {
+    snippits: Vec<Snippit>,
 }
 
 #[get("/")]
 pub fn index() -> Result<Template> {
-    #[derive(Serialize)]
-    struct SnippitIndexContext {
-        snippits: Vec<Snippit>,
-    }
 
     let mut v = vec![];
 
     // TODO: use r2d2 to get a connection pool
     let conn = get_redis_conn().chain_err(|| "problem getting redis connection")?;
 
-    let iter: redis::Iter<String> =
+    let iter: Vec<(String, u32)> =
         get_redis_keys(&conn).chain_err(|| "problem getting redis keys")?;
 
     for x in iter {
-        let map = get_redis_hash(&x.to_string(), &conn).chain_err(|| "problem getting redis hash")?;
+        let map = get_redis_hash(&x.0, &conn).chain_err(|| "problem getting redis hash")?;
 
         v.push(Snippit {
             title: map.get("created_by").cloned(),
             code_snippit: map.get("code_snippit").cloned(),
             snippit_language: map.get("snippit_language").cloned(),
-            snippit_key: x.to_string(),
+            snippit_key: x.0,
+            vote_count: x.1,
         })
     }
     println!("There are {} snippits", v.len());
@@ -72,6 +75,9 @@ pub fn index() -> Result<Template> {
 pub fn up_vote(post: Form<UpvoteForm>) -> Result<Redirect> {
     let conn = get_redis_conn().chain_err(|| "problem getting redis connection")?;
 
+    let post = post.get();
+    println!("upvoting key: {}", post.snippit_key);
+    do_up_vote(&post.snippit_key, &conn).chain_err(|| "problem upvoting")?;
     Ok(Redirect::to("/"))
 }
 
@@ -112,6 +118,12 @@ fn get_redis_conn() -> Result<redis::Connection> {
     Ok(conn)
 }
 
+fn do_up_vote<'a>(member: &'a str, conn: &redis::Connection) -> Result<()> {
+    let _: () = try!(conn.zincr("upvotes", member, 1));
+
+    Ok(())
+}
+
 // TODO: convet this to sorted set
 fn get_redis_hash<'a>(
     key: &'a str,
@@ -122,25 +134,19 @@ fn get_redis_hash<'a>(
     Ok(map)
 }
 
-fn get_redis_keys(conn: &redis::Connection) -> redis::RedisResult<redis::Iter<String>> {
-    Ok(try!(conn.scan_match("snippit*")))
+fn get_redis_keys(conn: &redis::Connection) -> redis::RedisResult<Vec<(String, u32)>> {
+    Ok(try!(conn.zrevrange_withscores("upvotes", 0, -1)))
 }
 
 fn generate_new_snippit_key() -> String {
     return format!("snippit:{}", Uuid::new_v4());
 }
 
-// TODO: convet this to sorted set
-// eg: zadd snippits INCR 1 <uuid> "seralized snippit"
 fn save_new_snippit<'a>(conn: &redis::Connection, tuples: &[(&'a str, &'a str)]) -> Result<()> {
     let key = generate_new_snippit_key();
 
-    let _: () = try!(conn.hset_multiple(key, tuples));
+//pipe line this
+    let _: () = try!(conn.zadd("upvotes", &key, 1));
+    let _: () = try!(conn.hset_multiple(&key, tuples));
     Ok(())
 }
-
-// fn up_vote_snippit<'a>(conn: &redis::Connection, snippit_key: &'a str) -> Result<()> {
-//     let _: () = try!(conn.zadd("upvotes", snippit_key, 1));
-
-//     Ok(())
-// }

@@ -1,4 +1,9 @@
-sample redis data
+// sample redis data
 HSET snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8079 created_at "1234" created_by "Tyler" code_snippit "this is some code" language "text"
 HSET snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8078 created_at "1234" created_by "Tyler" code_snippit "this is some code" language "text"
-HSET snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8077 created_at "1234" created_by "Tyler Scoville" code_snippit "this is some code" language "text"
+HSET snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8077 created_at "1234" created_by "Tyler" code_snippit "this is some code" snippit_language "text"
+
+
+zadd upvotes 1 snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8079
+zadd upvotes 15 snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8078
+zadd upvotes 10 snippit:5d81ee98-77f3-4a3f-8bec-6e2b79ab8077

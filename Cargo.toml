@@ -1,7 +1,7 @@
 [package]
 name = "rust_snippit_server"
 version = "0.1.0"
-authors = ["Tyler Scoville <tscoville@zendesk.com>"]
+authors = ["Tyler Scoville <tscoville2012@gmail.com>"]
 
 [dependencies]
 rocket = "0.3.6"

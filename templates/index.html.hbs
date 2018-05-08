@@ -22,8 +22,8 @@
 
                             <tr class="c-table__row">
                                 <td class="c-table__row__cell votecell" colspan="1">
-                                    <form id="up_vote" method="POST" action="/upvote">
-                                        <a href="javascript:{}" onclick="document.getElementById('up_vote').submit();" class="vote-up-off" title="This answer is useful">up vote</a>
+                                    <form id={{snippit_key}} method="POST" action="/upvote">
+                                        <a href="javascript:{}" onclick="document.getElementById('{{snippit_key}}').submit();" class="vote-up-off" title="This answer is useful">up vote</a>
                                         <input type="hidden" name="snippit_key" value={{snippit_key}}>
                                         <span itemprop="upvoteCount" class="vote-count-post ">{{vote_count}}</span>
                                     </form>
