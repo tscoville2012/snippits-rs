@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Tyler Scoville <tscoville2012@gmail.com>"]
 
 [dependencies]
-rocket = "0.3.11"
+rocket = "0.4.7"
 rocket_codegen = "0.3.11"
 error-chain="0.7"
 serde = "1.0.8"
